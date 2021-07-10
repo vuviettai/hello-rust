@@ -1,16 +1,11 @@
 use std::{error::Error, task::{Context, Poll}};
 use async_std::{io, task};
 use futures::prelude::*;
-
-//use serde_json::{Result as JsonResult, Value};
-use tonic::{self, transport::Channel, Request, Response, Status};
+use tonic::{self, transport::Channel};
 use env_logger;
 mod pokemon;
 use pokemon::{ReadRequest, ReadResponse, WriteRequest, p2p_client::P2pClient};
-use libp2p::kad::kbucket::Node;
-use tonic::codegen::http::uri::InvalidUri;
-use tonic::transport::Endpoint;
-use serde_json::{Result as JsonResult, Value};
+use serde_json::Result as JsonResult;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,9 +22,9 @@ impl GrpcClient {
     pub fn set_client(&mut self, client : P2pClient<Channel>) {
         self.value = Some(client);
     }
-    pub fn get_mut_value(&mut self) -> &Option<P2pClient<Channel>> {
-        &self.value
-    }
+    //pub fn get_mut_value(&mut self) -> &Option<P2pClient<Channel>> {
+    //    &self.value
+    //}
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>>{
@@ -57,35 +52,33 @@ async fn main() -> Result<(), Box<dyn Error>>{
 }
 fn handle_input_line(client : &mut GrpcClient, line: String) {
     let mut args = line.split(" ");
-    let v: Vec<&str> = line.split(" ").collect();
+    //let v: Vec<&str> = line.split(" ").collect();
     //println!("{:?}", v);
     match args.next() {
         Some("init") => {
-            let key = {
-                match args.next() {
-                    Some(val) => {
-                        let port: u16 = val.parse().unwrap();
-                        let uri = format!("http://[::1]:{:?}", port);
-                        match Channel::from_shared(uri) {
-                            Ok( endpoint) => {
-                                match task::block_on(endpoint.connect()) {
-                                    Ok(channel) => {
-                                        let p2p_client = P2pClient::new(channel);
-                                        client.set_client(p2p_client);
-                                        println!("Inited client with port {:?}", port);
-                                    }
-                                    _ => eprintln!("Cannot connect with given port")
-                                };
-                            }
-                            _ => eprintln!("Inited client with port {:?}", port)
+            match args.next() {
+                Some(val) => {
+                    let port: u16 = val.parse().unwrap();
+                    let uri = format!("http://[::1]:{:?}", port);
+                    match Channel::from_shared(uri) {
+                        Ok(endpoint) => {
+                            match task::block_on(endpoint.connect()) {
+                                Ok(channel) => {
+                                    let p2p_client = P2pClient::new(channel);
+                                    client.set_client(p2p_client);
+                                    println!("Inited client with port {:?}", port);
+                                }
+                                _ => eprintln!("Cannot connect with given port")
+                            };
                         }
-                    },
-                    None => {
-                        eprintln!("Expected port");
-                        return;
+                        _ => eprintln!("Inited client with port {:?}", port)
                     }
+                },
+                None => {
+                    eprintln!("Expected port");
+                    return;
                 }
-            };
+            }
         }
         Some("get") => {
             let key = {

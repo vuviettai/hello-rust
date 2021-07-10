@@ -73,7 +73,7 @@ impl NetworkBehaviourEventProcess<KademliaEvent> for MdnsBehaviour {
                     eprintln!("Failed to get providers: {:?}", err);
                 }
                 QueryResult::GetRecord(Ok(ok)) => {
-                    for PeerRecord { record: Record { key, value, .. }, ..} in ok.records {
+                    for PeerRecord { record: Record { value, .. }, ..} in ok.records {
                         let pokemon_content = String::from(std::str::from_utf8(&value).unwrap());
                         match &self.sender {
                             None => {},
