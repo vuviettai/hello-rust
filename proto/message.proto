@@ -1,0 +1,38 @@
+// version of protocol buffer used
+syntax = "proto3";
+
+// package name for the buffer will be used later
+package message;
+
+// service which can be executed
+service Message {
+    // function which can be called
+    rpc GetByKey (ReadRequest) returns (ReadResponse);
+    rpc PutValue (WriteRequest) returns (WriteResponse);
+}
+// argument
+message ReadRequest {
+// data type and position of data
+   string key = 1;
+}
+
+// return value
+message ReadResponse {
+// data type and position of data
+   string key = 1;
+   string value = 2;
+}
+
+// argument
+message WriteRequest {
+// data type and position of data
+   string key = 1;
+   string value = 2;
+}
+
+// return value
+message WriteResponse {
+// data type and position of data
+   string key = 1;
+   int32 result = 2;  //0-success
+}
