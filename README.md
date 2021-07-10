@@ -6,7 +6,7 @@ Simple implementation for exercise: https://github.com/massbitprotocol/helloworl
 
 ## Instruction
 
-1. git clone https://github.com/vus viettai/hello-rust.git
+1. git clone https://github.com/vuviettai/hello-rust.git
 
 2. cd hello-rust
 3. cargo run
