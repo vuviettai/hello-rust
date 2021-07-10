@@ -1,4 +1,4 @@
-use std::{error::Error, task::{Context, Poll}, io};
+use std::{error::Error, task::{Context, Poll}};
 use async_std::task;
 use futures::prelude::*;
 use libp2p::kad::{
