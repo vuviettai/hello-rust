@@ -59,7 +59,7 @@ fn handle_input_line(client : &mut GrpcClient, line: String) {
             match args.next() {
                 Some(val) => {
                     let port: u16 = val.parse().unwrap();
-                    let uri = format!("http://[::1]:{:?}", port);
+                    let uri = format!("http://127.0.0.1:{:?}", port);
                     match Channel::from_shared(uri) {
                         Ok(endpoint) => {
                             match task::block_on(endpoint.connect()) {

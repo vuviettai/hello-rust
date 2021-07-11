@@ -14,22 +14,8 @@ use libp2p::kad::{
 };
 use libp2p::{identity, development_transport, PeerId, Swarm, NetworkBehaviour, mdns::{Mdns, MdnsConfig, MdnsEvent}, swarm::{NetworkBehaviourEventProcess}};
 use tokio::sync::mpsc::UnboundedReceiver;
-use std::sync::mpsc::Sender;
-
-#[derive(Debug)]
-pub enum Errors {
-    NoSuchPerson,
-}
-pub enum Commands {
-    PutPokemon(String, String),
-    GetPokemon(String, Sender<Responses>)
-}
-#[derive(Debug)]
-pub enum Responses {
-    Success(),
-    Error(),
-    GotPokemon(String)
-}
+use std::sync::mpsc::{Sender};
+use crate::model::{Commands, Responses};
 
 // We create a custom network behaviour that combines Kademlia and mDNS.
 #[derive(NetworkBehaviour)]
@@ -158,11 +144,23 @@ pub async fn init_node (mut swarm : Swarm<MdnsBehaviour>,
                             swarm.behaviour_mut().kademlia.put_record(record, Quorum::One).expect("Failed to store record locally.");
                             //Ok(Responses::Success())
                         }
+                        Commands::StorePokemon(pokemon) => {
+                            let content = serde_json::to_string(&pokemon).unwrap();
+                            println!("Receive put request pokemon name {:?} with color {:?}", pokemon.name, content);
+                            let key = Key::new(&pokemon.name);
+                            let record = Record {
+                                key,
+                                value: content.as_bytes().to_vec(),
+                                publisher: None,
+                                expires: None,
+                            };
+                            swarm.behaviour_mut().kademlia.put_record(record, Quorum::One).expect("Failed to store record locally.");
+                            //Ok(Responses::Success())
+                        }
                         Commands::GetPokemon(name, sender) => {
                             let key = Key::new(&name);
                             println!("Receive request for name {:?}", name);
                             swarm.behaviour_mut().set_sender(sender);
-                            //sender.send(Responses::GotPokemon(String::from("fdasfds")));
                             swarm.behaviour_mut().kademlia.get_record(&key, Quorum::One);
                             //Ok(Responses::Success())
                         }
@@ -179,7 +177,7 @@ pub async fn init_node (mut swarm : Swarm<MdnsBehaviour>,
                 Poll::Pending => {
                     if !listening {
                         if let Some(a) = Swarm::listeners(&swarm).next() {
-                            println!("Listening on {:?}", a);
+                            println!("P2P is listening on {:?}", a);
                             listening = true;
                         }
                     }

@@ -2,8 +2,8 @@ use crate::pokemon::{ReadRequest, ReadResponse, WriteRequest, WriteResponse, p2p
 use tonic::{Request, Response, Status};
 use tokio::sync::mpsc::UnboundedSender;
 use std::sync::mpsc::channel;
-
-use crate::node::*;
+use crate::model::{Commands, Responses};
+//use crate::node::*;
 
 //use libp2p::request_response::channel;
 //use hello_rust::reqchan::{channel, RequestSender, ResponseReceiver};
