@@ -4,33 +4,9 @@ version = "0.1.0"
 edition = "2018"
 default-run = "hello-rust"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-[[bin]]
-name = "client"
-path = "src/client.rs"
-
-[[bin]]
-name = "jsonserver"
-path = "src/json/server.rs"
-
-[[bin]]
-name = "jsonclient"
-path = "src/json/client.rs"
-[[bin]]
-name = "jsonrpc"
-path = "src/json/jsonrpc.rs"
-[[bin]]
-name = "serde"
-path = "src/json/serdejs.rs"
-
-# server binary
-[[bin]]
-name = "grpcserver"
-path = "src/grpc/server.rs"
-
-# client binary
-[[bin]]
-name = "grpcclient"
-path = "src/grpc/client.rs"
+#[[bin]]
+#name = "client"
+#path = "src/client.rs"
 
 [dependencies]
 #jsonrpc-core = "17.1.0"
